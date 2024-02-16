@@ -12,6 +12,7 @@ httpx = "^0.26.0"
 bs4 = "^0.0.2"
 lxml = "^5.1.0"
 pydantic = "^2.6.1"
+fast-depends = "^2.3.1"
 
 
 [build-system]

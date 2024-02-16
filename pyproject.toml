@@ -9,6 +9,8 @@ packages = [{include = "goretsky_integration_shift_manager_auth"}]
 [tool.poetry.dependencies]
 python = "^3.11"
 httpx = "^0.26.0"
+bs4 = "^0.0.2"
+lxml = "^5.1.0"
 
 
 [build-system]

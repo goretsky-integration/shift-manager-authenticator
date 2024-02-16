@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "goretsky-integration-shift-manager-auth"
+version = "1.0.0"
+description = ""
+authors = ["Eldos <eldos.baktybekov@gmail.com>"]
+readme = "README.md"
+packages = [{include = "goretsky_integration_shift_manager_auth"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+httpx = "^0.26.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

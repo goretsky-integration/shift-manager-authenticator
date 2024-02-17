@@ -1,6 +1,6 @@
-from uuid import UUID
-
 from pydantic import BaseModel, SecretStr
+
+from models.units import Unit
 
 __all__ = ('Account',)
 
@@ -8,4 +8,4 @@ __all__ = ('Account',)
 class Account(BaseModel):
     username: str
     password: SecretStr
-    unit_uuids: list[UUID]
+    units: list[Unit]

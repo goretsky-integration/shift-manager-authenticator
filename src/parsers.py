@@ -41,9 +41,9 @@ def parse_account_login_form_data(
 ) -> AccountLoginFormData:
     soup = BeautifulSoup(account_login_form_html, 'lxml')
 
-    return_url = (soup.find(attrs={'name': 'returnUrl'}) or {}).get('value')
+    return_url = (soup.find('input', attrs={'name': 'ReturnUrl'}) or {}).get('value')
     request_verification_token = (
-        (soup.find(attrs={'name': '__RequestVerificationToken'}) or {})
+        (soup.find('input', attrs={'name': '__RequestVerificationToken'}) or {})
         .get('value')
     )
 

@@ -15,6 +15,7 @@ def closing_auth_http_client() -> AuthHttpClient:
     with httpx.Client(
             headers={'User-Agent': 'dodoextbot'},
             base_url='https://auth.dodois.io',
+            follow_redirects=True,
     ) as http_client:
         yield AuthHttpClient(http_client)
 
@@ -27,5 +28,6 @@ def closing_shift_manager_http_client(
     with httpx.Client(
             headers={'User-Agent': 'dodoextbot'},
             base_url=url,
+            follow_redirects=True,
     ) as http_client:
         yield ShiftManagerHttpClient(http_client)

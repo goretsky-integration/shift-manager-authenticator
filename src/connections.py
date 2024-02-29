@@ -26,22 +26,21 @@ class DodoConnection:
         self.auth_http_client = auth_http_client
         self.shift_manager_http_client = shift_manager_http_client
 
-    def go_to_shift_manager_domain(self) -> tuple[str, dict[str, str]]:
+    def go_to_shift_manager_domain(self) -> str:
         log.debug('1. Going to shift manager domain: sending')
         response = self.shift_manager_http_client.get(
             url='/Infrastructure/Authenticate/Oidc'
         )
-        cookies = dict(self.shift_manager_http_client.cookies)
         log.debug(
             '1. Going to shift manager domain: received',
             status=response.status_code,
         )
-        return response.text, cookies
+        return response.text
 
     def send_connect_authorize_form_data(
             self,
             connect_authorize_form_data: ConnectAuthorizeFormData,
-    ) -> tuple[str, dict[str, str]]:
+    ) -> str:
         request_data = connect_authorize_form_data.model_dump()
 
         with bound_contextvars(request_data=request_data):
@@ -54,13 +53,11 @@ class DodoConnection:
                 '2. Connect authorize form data: received',
                 status=response.status_code,
             )
-        cookies = dict(self.auth_http_client.cookies)
-        return response.text, cookies
+        return response.text
 
     def send_account_login_form_data(
             self,
             account_login_form_data: AccountLoginFormData,
-            cookies: dict[str, str],
     ) -> str:
         request_data = {
             'ReturnUrl': account_login_form_data.return_url,
@@ -77,13 +74,11 @@ class DodoConnection:
             response = self.auth_http_client.post(
                 url='/account/login',
                 data=request_data,
-                cookies=cookies,
             )
             log.debug(
                 '3. Account login form data: received',
                 status=response.status_code,
             )
-        print(dict(self.auth_http_client.cookies))
         return response.text
 
     def send_sign_in_oidc_form_data(

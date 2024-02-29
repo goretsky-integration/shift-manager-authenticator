@@ -16,7 +16,6 @@ __all__ = (
 def parse_sign_in_oidc_form_data(
         sign_in_oidc_form_html: str,
 ) -> SignInOidcFormData:
-    print(sign_in_oidc_form_html)
     soup = BeautifulSoup(sign_in_oidc_form_html, 'lxml')
 
     code = (soup.find('input', attrs={'name': 'code'}) or {}).get('value')

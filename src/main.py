@@ -1,5 +1,6 @@
 from uuid import UUID
 
+import httpx
 import structlog.stdlib
 from structlog.contextvars import bound_contextvars
 
@@ -88,11 +89,10 @@ def authenticate(
                 country_code=country_code,
             )
         )
-        log.info(session)
-        # httpx.patch('http://95.163.236.39/api/auth/auth/cookies/', json={
-        #     'account_name': unit.account_name,
-        #     'cookies': session,
-        # })
+        httpx.patch('http://95.163.236.39/api/auth/auth/cookies/', json={
+            'account_name': unit.account_name,
+            'cookies': session,
+        })
 
 
 def main() -> None:

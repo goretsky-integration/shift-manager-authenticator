@@ -113,7 +113,7 @@ class DodoConnection:
             log.debug('5. Select role form data: sending')
             response = self.shift_manager_http_client.post(
                 url='/Infrastructure/Authenticate/SetRole',
-                data=request_data,
+                json=request_data,
             )
             log.debug(
                 '5. Select role form data: received',

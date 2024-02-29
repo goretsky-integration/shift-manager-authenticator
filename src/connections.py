@@ -104,7 +104,7 @@ class DodoConnection:
                 status=response.status_code,
             )
 
-    def send_select_role_form_data(self, department_uuid: UUID) -> None:
+    def send_select_role_form_data(self, department_uuid: UUID, cookies) -> None:
         request_data = {
             'departmentId': department_uuid.hex,
             'role': 'ShiftManager',
@@ -114,6 +114,7 @@ class DodoConnection:
             response = self.shift_manager_http_client.post(
                 url='/Infrastructure/Authenticate/SetRole',
                 json=request_data,
+                cookies=cookies,
             )
             log.debug(
                 '5. Select role form data: received',

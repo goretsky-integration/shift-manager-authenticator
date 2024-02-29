@@ -73,7 +73,7 @@ def authenticate_unit(
 
         log.debug(shift_manager_http_client.cookies)
 
-        program.send_select_role_form_data(unit_uuid)
+        program.send_select_role_form_data(unit_uuid, cookies=auth_http_client.cookies)
         log.debug('Authorization: parsed select role form data')
 
         return dict(shift_manager_http_client.cookies)

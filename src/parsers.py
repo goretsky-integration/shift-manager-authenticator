@@ -16,13 +16,14 @@ __all__ = (
 def parse_sign_in_oidc_form_data(
         sign_in_oidc_form_html: str,
 ) -> SignInOidcFormData:
+    print(sign_in_oidc_form_html)
     soup = BeautifulSoup(sign_in_oidc_form_html, 'lxml')
 
-    code = (soup.find(attrs={'name': 'code'}) or {}).get('value')
-    scope = (soup.find(attrs={'name': 'scope'}) or {}).get('value')
-    state = (soup.find(attrs={'name': 'state'}) or {}).get('value')
+    code = (soup.find('input', attrs={'name': 'code'}) or {}).get('value')
+    scope = (soup.find('input', attrs={'name': 'scope'}) or {}).get('value')
+    state = (soup.find('input', attrs={'name': 'state'}) or {}).get('value')
     session_state = (
-        (soup.find(attrs={'name': 'session_state'}) or {}).get('value')
+        (soup.find('input', attrs={'name': 'session_state'}) or {}).get('value')
     )
 
     return SignInOidcFormData(

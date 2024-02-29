@@ -4,7 +4,7 @@ __all__ = ('SignInOidcFormData',)
 
 
 class SignInOidcFormData(BaseModel):
-    code: str | None
-    scope: str | None
-    state: str | None
-    session_state: str | None
+    code: str
+    scope: str
+    state: str
+    session_state: str

@@ -37,14 +37,18 @@ def authenticate_unit(
             auth_http_client=auth_http_client,
             shift_manager_http_client=shift_manager_http_client,
         )
-        connect_authorize_form_html = program.go_to_shift_manager_domain()
+        connect_authorize_form_html, shift_manager_domain_cookies = (
+            program.go_to_shift_manager_domain()
+        )
         connect_authorize_form_data = parse_connect_authorize_form_data(
             connect_authorize_form_html=connect_authorize_form_html,
         )
         log.debug('Authorization: parsed connect authorize form data')
 
-        account_login_form_html = program.send_connect_authorize_form_data(
-            connect_authorize_form_data=connect_authorize_form_data,
+        account_login_form_html, connect_authorize_cookies = (
+            program.send_connect_authorize_form_data(
+                connect_authorize_form_data=connect_authorize_form_data,
+            )
         )
         account_login_form_data = parse_account_login_form_data(
             account_login_form_html=account_login_form_html,
@@ -56,14 +60,20 @@ def authenticate_unit(
 
         sign_in_oidc_form_html = program.send_account_login_form_data(
             account_login_form_data=account_login_form_data,
+            cookies=connect_authorize_cookies,
         )
+        with open('./response.html', 'w') as file:
+            file.write(sign_in_oidc_form_html)
         sign_in_oidc_form_data = parse_sign_in_oidc_form_data(
             sign_in_oidc_form_html=sign_in_oidc_form_html,
         )
         log.debug('Authorization: parsed sign in oidc form data')
 
-        program.send_sign_in_oidc_form_data(sign_in_oidc_form_data)
+        program.send_sign_in_oidc_form_data(sign_in_oidc_form_data,
+                                            auth_http_client.cookies)
         log.debug('Authorization: sent sign in oidc form data')
+
+        log.debug(shift_manager_http_client.cookies)
 
         program.send_select_role_form_data(unit_uuid)
         log.debug('Authorization: parsed select role form data')
@@ -76,7 +86,7 @@ def authenticate(
         country_code: str,
 ):
     for unit in account.units:
-        print(
+        session = (
             authenticate_unit(
                 username=account.username,
                 password=account.password.get_secret_value(),
@@ -84,6 +94,11 @@ def authenticate(
                 country_code=country_code,
             )
         )
+        log.info(session)
+        # httpx.patch('http://95.163.236.39/api/auth/auth/cookies/', json={
+        #     'account_name': unit.account_name,
+        #     'cookies': session,
+        # })
 
 
 def main() -> None:

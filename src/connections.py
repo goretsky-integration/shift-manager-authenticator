@@ -86,7 +86,12 @@ class DodoConnection:
             sign_in_oidc_form_data: SignInOidcFormData,
             cookies,
     ) -> None:
-        request_data = sign_in_oidc_form_data.model_dump()
+        request_data = {
+            'code': sign_in_oidc_form_data.code,
+            'scope': sign_in_oidc_form_data.scope,
+            'state': sign_in_oidc_form_data.state,
+            'session_state': sign_in_oidc_form_data.session_state,
+        }
         with bound_contextvars(request_data=request_data):
             log.debug('4. Sign in OIDC form data: sending')
             response = self.shift_manager_http_client.post(

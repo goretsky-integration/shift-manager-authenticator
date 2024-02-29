@@ -68,6 +68,9 @@ def authenticate_unit(
                                             auth_http_client.cookies)
         log.debug('Authorization: sent sign in oidc form data')
 
+        print(dict(shift_manager_http_client.cookies))
+        print(dict(auth_http_client.cookies))
+
         log.debug(shift_manager_http_client.cookies)
 
         program.send_select_role_form_data(unit_uuid)

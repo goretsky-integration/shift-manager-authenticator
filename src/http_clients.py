@@ -1,16 +1,21 @@
-from contextlib import contextmanager
+import contextlib
 
 import httpx
 
-from models import AuthHttpClient, ShiftManagerHttpClient
+from models import (
+    AuthCredentialsStorageApiConnectionHttpClient,
+    AuthHttpClient,
+    ShiftManagerHttpClient,
+)
 
 __all__ = (
     'closing_shift_manager_http_client',
     'closing_auth_http_client',
+    'closing_auth_credentials_storage_api_connection_http_client',
 )
 
 
-@contextmanager
+@contextlib.contextmanager
 def closing_auth_http_client() -> AuthHttpClient:
     with httpx.Client(
             headers={'User-Agent': 'dodoextbot'},
@@ -20,7 +25,7 @@ def closing_auth_http_client() -> AuthHttpClient:
         yield AuthHttpClient(http_client)
 
 
-@contextmanager
+@contextlib.contextmanager
 def closing_shift_manager_http_client(
         country_code: str,
 ) -> ShiftManagerHttpClient:
@@ -31,3 +36,11 @@ def closing_shift_manager_http_client(
             follow_redirects=True,
     ) as http_client:
         yield ShiftManagerHttpClient(http_client)
+
+
+@contextlib.contextmanager
+def closing_auth_credentials_storage_api_connection_http_client(
+        api_base_url: str,
+) -> AuthCredentialsStorageApiConnectionHttpClient:
+    with httpx.Client(base_url=api_base_url) as http_client:
+        yield AuthCredentialsStorageApiConnectionHttpClient(http_client)

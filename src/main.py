@@ -1,12 +1,13 @@
 from uuid import UUID
 
-import httpx
 import structlog.stdlib
 from structlog.contextvars import bound_contextvars
 
+from auth_server import AuthCredentialsStorageApiConnection
 from config import load_accounts
 from connections import DodoConnection
 from http_clients import (
+    closing_auth_credentials_storage_api_connection_http_client,
     closing_auth_http_client,
     closing_shift_manager_http_client,
 )
@@ -68,12 +69,8 @@ def authenticate_unit(
                                             auth_http_client.cookies)
         log.debug('Authorization: sent sign in oidc form data')
 
-        print(dict(shift_manager_http_client.cookies))
-        print(dict(auth_http_client.cookies))
-
-        log.debug(shift_manager_http_client.cookies)
-
-        program.send_select_role_form_data(unit_uuid, cookies=auth_http_client.cookies)
+        program.send_select_role_form_data(unit_uuid,
+                                           cookies=auth_http_client.cookies)
         log.debug('Authorization: parsed select role form data')
 
         return dict(shift_manager_http_client.cookies)
@@ -82,20 +79,34 @@ def authenticate_unit(
 def authenticate(
         account: Account,
         country_code: str,
+        api_base_url: str,
 ):
-    for unit in account.units:
-        session = (
-            authenticate_unit(
-                username=account.username,
-                password=account.password.get_secret_value(),
-                unit_uuid=unit.uuid,
-                country_code=country_code,
-            )
+    with closing_auth_credentials_storage_api_connection_http_client(
+            api_base_url=api_base_url,
+    ) as http_client:
+        auth_credentials_storage_api_connection = (
+            AuthCredentialsStorageApiConnection(http_client)
         )
-        httpx.patch('http://95.163.236.39/api/auth/auth/cookies/', json={
-            'account_name': unit.account_name,
-            'cookies': session,
-        })
+
+        for unit in account.units:
+            try:
+                session = authenticate_unit(
+                    username=account.username,
+                    password=account.password.get_secret_value(),
+                    unit_uuid=unit.uuid,
+                    country_code=country_code,
+                )
+            except Exception:
+                log.exception(
+                    'Could not authenticate unit',
+                    account_name=account.account_name,
+                    unit_uuid=unit.uuid,
+                )
+
+            auth_credentials_storage_api_connection.save_cookies(
+                account_name=account.account_name,
+                cookies=session,
+            )
 
 
 def main() -> None:
